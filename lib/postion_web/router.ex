@@ -68,6 +68,13 @@ defmodule PostionWeb.Router do
       on_mount: [{PostionWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+      live "/topics", TopicLive.Index, :index
+      live "/topics/new", TopicLive.Index, :new
+      live "/topics/:id/edit", TopicLive.Index, :edit
+
+      live "/topics/:id", TopicLive.Show, :show
+      live "/topics/:id/show/edit", TopicLive.Show, :edit
     end
   end
 
