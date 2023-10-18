@@ -4,7 +4,7 @@ defmodule Postion.Content.Topic do
 
   schema "topics" do
     field :name, :string
-    field :parent, :id
+    belongs_to :parent, __MODULE__
 
     timestamps(type: :utc_datetime)
   end
@@ -12,7 +12,8 @@ defmodule Postion.Content.Topic do
   @doc false
   def changeset(topic, attrs) do
     topic
-    |> cast(attrs, [:name])
+    |> cast(attrs, [:name, :parent_id])
     |> validate_required([:name])
+    |> foreign_key_constraint(:parent_id)
   end
 end

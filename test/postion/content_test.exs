@@ -20,15 +20,31 @@ defmodule Postion.ContentTest do
       assert Content.get_topic!(topic.id) == topic
     end
 
-    test "create_topic/1 with valid data creates a topic" do
+    test "create_topic/1 with valid data creates a root topic" do
       valid_attrs = %{name: "some name"}
 
       assert {:ok, %Topic{} = topic} = Content.create_topic(valid_attrs)
       assert topic.name == "some name"
     end
 
+    test "create_topic/1 with valid data creates a child topic" do
+      parent = topic_fixture()
+      valid_attrs = %{name: "some name", parent_id: parent.id}
+
+      assert {:ok, %Topic{} = topic} = Content.create_topic(valid_attrs)
+      assert topic.parent_id == parent.id
+    end
+
     test "create_topic/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Content.create_topic(@invalid_attrs)
+    end
+
+    test "create_topic/1 with non existent topic returns error changeset" do
+      parent = topic_fixture()
+      Repo.delete!(parent)
+      attrs = %{name: "some name", parent_id: parent.id}
+
+      assert {:error, %Ecto.Changeset{}} = Content.create_topic(attrs)
     end
 
     test "update_topic/2 with valid data updates the topic" do

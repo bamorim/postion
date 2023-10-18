@@ -4,11 +4,11 @@ defmodule Postion.Repo.Migrations.CreateTopics do
   def change do
     create table(:topics) do
       add :name, :string
-      add :parent, references(:topics, on_delete: :nothing)
+      add :parent_id, references(:topics, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end
 
-    create index(:topics, [:parent])
+    create index(:topics, [:parent_id])
   end
 end
