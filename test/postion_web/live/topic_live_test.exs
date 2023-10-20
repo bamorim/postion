@@ -92,7 +92,7 @@ defmodule PostionWeb.TopicLiveTest do
       assert show_live |> element("a", "Edit") |> render_click() =~
                "Edit Topic"
 
-      assert_patch(show_live, ~p"/topics/#{topic}/show/edit")
+      assert_patch(show_live, ~p"/topics/#{topic}/edit")
 
       assert show_live
              |> form("#topic-form", topic: @invalid_attrs)
