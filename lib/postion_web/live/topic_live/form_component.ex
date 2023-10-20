@@ -20,6 +20,7 @@ defmodule PostionWeb.TopicLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:name]} type="text" label="Name" />
+        <.input field={@form[:parent_id]} type="hidden" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Topic</.button>
         </:actions>
@@ -30,7 +31,7 @@ defmodule PostionWeb.TopicLive.FormComponent do
 
   @impl true
   def update(%{topic: topic} = assigns, socket) do
-    changeset = Content.change_topic(topic)
+    changeset = Content.change_topic(topic, Map.get(assigns, :changes, %{}))
 
     {:ok,
      socket

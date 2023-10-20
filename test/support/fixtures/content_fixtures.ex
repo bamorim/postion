@@ -11,7 +11,7 @@ defmodule Postion.ContentFixtures do
     {:ok, topic} =
       attrs
       |> Enum.into(%{
-        name: "some name"
+        name: "topic##{System.unique_integer()}"
       })
       |> Postion.Content.create_topic()
 

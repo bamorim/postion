@@ -8,6 +8,8 @@ defmodule Postion.Content do
 
   alias Postion.Content.Topic
 
+  @type filter() :: {:parent_id, pos_integer() | nil}
+
   @doc """
   Returns the list of topics.
 
@@ -16,9 +18,23 @@ defmodule Postion.Content do
       iex> list_topics()
       [%Topic{}, ...]
 
+      iex> list_topics(parent_id: 123)
+      [%Topic{}, ...]
+
   """
-  def list_topics do
-    Repo.all(Topic)
+  @spec list_topics([filter()]) :: [%Topic{}]
+  def list_topics(filters \\ []) do
+    filters
+    |> Enum.reduce(Topic, &filter_topic(&2, &1))
+    |> Repo.all()
+  end
+
+  defp filter_topic(query, {:parent_id, nil}) do
+    where(query, [topic], is_nil(topic.parent_id))
+  end
+
+  defp filter_topic(query, {:parent_id, parent_id}) do
+    where(query, parent_id: ^parent_id)
   end
 
   @doc """

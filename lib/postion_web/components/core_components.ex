@@ -97,7 +97,7 @@ defmodule PostionWeb.CoreComponents do
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
   """
-  attr :id, :string, default: nil, doc: "the optional id of flash container"
+  attr :id, :string, doc: "the optional id of flash container"
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
@@ -535,14 +535,12 @@ defmodule PostionWeb.CoreComponents do
 
   def list(assigns) do
     ~H"""
-    <div class="mt-14">
-      <dl class="-my-4 divide-y divide-zinc-100">
-        <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
-        </div>
-      </dl>
-    </div>
+    <dl class="-my-4 divide-y divide-zinc-100">
+      <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
+        <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
+        <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+      </div>
+    </dl>
     """
   end
 

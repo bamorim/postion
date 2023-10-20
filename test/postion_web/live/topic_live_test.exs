@@ -29,6 +29,13 @@ defmodule PostionWeb.TopicLiveTest do
       assert html =~ topic.name
     end
 
+    test "don't show non-root topics", %{conn: conn, topic: topic} do
+      child_topic = topic_fixture(%{parent_id: topic.id, name: "child name"})
+      {:ok, _index_live, html} = live(conn, ~p"/topics")
+
+      refute html =~ child_topic.name
+    end
+
     test "saves new topic", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/topics")
 
@@ -93,6 +100,15 @@ defmodule PostionWeb.TopicLiveTest do
       assert html =~ topic.name
     end
 
+    test "displays children topics", %{conn: conn, topic: topic} do
+      other_root_topic = topic_fixture()
+      child_topic = topic_fixture(%{parent_id: topic.id})
+      {:ok, _show_live, html} = live(conn, ~p"/topics/#{topic}")
+
+      assert html =~ child_topic.name
+      refute html =~ other_root_topic.name
+    end
+
     test "updates topic within modal", %{conn: conn, topic: topic} do
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
 
@@ -114,6 +130,32 @@ defmodule PostionWeb.TopicLiveTest do
       html = render(show_live)
       assert html =~ "Topic updated successfully"
       assert html =~ "some updated name"
+    end
+
+    test "saves new child topic", %{conn: conn, topic: topic} do
+      {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
+
+      assert show_live |> element("a", "New child topic") |> render_click() =~
+               "New Child Topic"
+
+      assert_patch(show_live, ~p"/topics/#{topic}/children/new")
+
+      assert show_live
+             |> form("#topic-form", topic: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
+
+      child_topic_name = "topic##{System.unique_integer()}"
+
+      assert show_live
+             |> form("#topic-form", topic: %{name: child_topic_name})
+             |> render_submit()
+
+      assert_patch(show_live, ~p"/topics/#{topic}")
+
+      html = render(show_live)
+      assert html =~ "Topic created successfully"
+
+      assert html =~ child_topic_name
     end
   end
 end

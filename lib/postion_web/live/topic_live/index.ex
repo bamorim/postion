@@ -6,7 +6,7 @@ defmodule PostionWeb.TopicLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :topics, Content.list_topics())}
+    {:ok, stream(socket, :topics, Content.list_topics(parent_id: nil))}
   end
 
   @impl true

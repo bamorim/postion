@@ -12,7 +12,22 @@ defmodule Postion.ContentTest do
 
     test "list_topics/0 returns all topics" do
       topic = topic_fixture()
-      assert Content.list_topics() == [topic]
+      child_topic = topic_fixture(%{parent_id: topic.id})
+      topics = Content.list_topics()
+      assert [%Topic{}, %Topic{}] = topics
+      assert MapSet.new(topics, & &1.id) == MapSet.new([topic.id, child_topic.id])
+    end
+
+    test "list_topics/1 can filter child topics by parent" do
+      topic = topic_fixture()
+      child_topic = topic_fixture(%{parent_id: topic.id})
+      assert Content.list_topics(parent_id: topic.id) == [child_topic]
+    end
+
+    test "list_topics/1 can filter root topics" do
+      topic = topic_fixture()
+      _child_topic = topic_fixture(%{parent_id: topic.id})
+      assert Content.list_topics(parent_id: nil) == [topic]
     end
 
     test "get_topic!/1 returns the topic with given id" do
