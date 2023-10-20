@@ -4,6 +4,8 @@ defmodule Postion.ContentFixtures do
   entities via the `Postion.Content` context.
   """
 
+  import Postion.AccountsFixtures
+
   @doc """
   Generate a topic.
   """
@@ -22,6 +24,11 @@ defmodule Postion.ContentFixtures do
   Generate a post.
   """
   def post_fixture(attrs \\ %{}) do
+    author =
+      Map.get_lazy(attrs, :author, fn ->
+        user_fixture()
+      end)
+
     topic_id =
       Map.get_lazy(attrs, :topic_id, fn ->
         Map.get_lazy(attrs, :topic, fn ->
@@ -29,14 +36,14 @@ defmodule Postion.ContentFixtures do
         end).id
       end)
 
-    {:ok, post} =
-      attrs
-      |> Enum.into(%{
+    attrs =
+      Enum.into(attrs, %{
         content: "content##{System.unique_integer()}",
         title: "post##{System.unique_integer()}",
         topic_id: topic_id
       })
-      |> Postion.Content.create_post()
+
+    {:ok, post} = Postion.Content.create_post(author, attrs)
 
     post
   end

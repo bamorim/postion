@@ -55,4 +55,11 @@ defmodule Postion.DataCase do
       end)
     end)
   end
+
+  @doc """
+  Take fields values from an ecto schema
+  """
+  def take_fields(%schema{} = struct) do
+    Map.take(struct, schema.__schema__(:fields))
+  end
 end

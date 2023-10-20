@@ -2,12 +2,14 @@ defmodule Postion.ContentTest do
   use Postion.DataCase
 
   alias Postion.Content
+  alias Postion.Content.Contributor
+  alias Postion.Content.Post
+  alias Postion.Content.Topic
+
+  import Postion.AccountsFixtures
+  import Postion.ContentFixtures
 
   describe "topics" do
-    alias Postion.Content.Topic
-
-    import Postion.ContentFixtures
-
     @invalid_attrs %{name: nil}
 
     test "list_topics/0 returns all topics" do
@@ -89,39 +91,38 @@ defmodule Postion.ContentTest do
   end
 
   describe "posts" do
-    alias Postion.Content.Post
-
-    import Postion.ContentFixtures
-
     @invalid_attrs %{title: nil, content: nil, topic_id: nil}
 
     test "list_posts/0 returns all posts" do
       post = post_fixture()
-      assert Content.list_posts() == [post]
+      assert Enum.map(Content.list_posts(), &take_fields/1) == [take_fields(post)]
     end
 
     test "list_posts/1 returns posts by topic" do
       post = post_fixture()
       _other_post = post_fixture()
-      assert Content.list_posts(topic_id: post.topic_id) == [post]
+      returned_posts = Content.list_posts(topic_id: post.topic_id)
+      assert Enum.map(returned_posts, &take_fields/1) == [take_fields(post)]
     end
 
     test "get_post!/1 returns the post with given id" do
       post = post_fixture()
-      assert Content.get_post!(post.id) == post
+      assert post.id |> Content.get_post!() |> take_fields() == take_fields(post)
     end
 
-    test "create_post/1 with valid data creates a post" do
+    test "create_post/2 with valid data creates a post" do
       topic = topic_fixture()
+      %{id: author_id} = author = user_fixture()
       valid_attrs = %{title: "some title", content: "some content", topic_id: topic.id}
 
-      assert {:ok, %Post{} = post} = Content.create_post(valid_attrs)
+      assert {:ok, %Post{} = post} = Content.create_post(author, valid_attrs)
       assert post.title == "some title"
       assert post.content == "some content"
+      assert [%Contributor{user_id: ^author_id, author: true}] = post.contributors
     end
 
-    test "create_post/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Content.create_post(@invalid_attrs)
+    test "create_post/2 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Content.create_post(user_fixture(), @invalid_attrs)
     end
 
     test "update_post/2 with valid data updates the post" do
@@ -136,7 +137,7 @@ defmodule Postion.ContentTest do
     test "update_post/2 with invalid data returns error changeset" do
       post = post_fixture()
       assert {:error, %Ecto.Changeset{}} = Content.update_post(post, @invalid_attrs)
-      assert post == Content.get_post!(post.id)
+      assert take_fields(post) == post.id |> Content.get_post!() |> take_fields()
     end
 
     test "delete_post/1 deletes the post" do

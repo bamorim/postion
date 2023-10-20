@@ -4,9 +4,11 @@ defmodule Postion.Content do
   """
 
   import Ecto.Query, warn: false
-  alias Postion.Repo
 
+  alias Postion.Repo
   alias Postion.Content.Topic
+  alias Postion.Content.Contributor
+  alias Postion.Accounts.User
 
   @type topic_filter() :: {:parent_id, pos_integer() | nil}
   @type post_filter() :: {:topic_id, pos_integer()}
@@ -161,15 +163,15 @@ defmodule Postion.Content do
 
   ## Examples
 
-      iex> create_post(%Topic{}, %{field: value})
+      iex> create_post(%User{}, %{field: value})
       {:ok, %Post{}}
 
-      iex> create_post(%Topic{}, %{field: bad_value})
+      iex> create_post(%User{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_post(attrs \\ %{}) do
-    %Post{}
+  def create_post(%User{id: author_id}, attrs) do
+    %Post{contributors: [%Contributor{author: true, user_id: author_id}]}
     |> Post.changeset(attrs)
     |> Repo.insert()
   end

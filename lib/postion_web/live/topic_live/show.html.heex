@@ -93,6 +93,7 @@
     action={:new}
     post={@post}
     changes={%{topic_id: @topic.id}}
+    author={@current_user}
     patch={~p"/topics/#{@topic}"}
   />
 </.modal>

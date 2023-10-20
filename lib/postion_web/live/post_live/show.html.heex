@@ -1,6 +1,5 @@
 <.header>
-  Post <%= @post.id %>
-  <:subtitle>This is a post record from your database.</:subtitle>
+  <%= @post.title %>
   <:actions>
     <.link patch={~p"/posts/#{@post}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit post</.button>
@@ -11,10 +10,9 @@
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Title"><%= @post.title %></:item>
-  <:item title="Content"><%= @post.content %></:item>
-</.list>
+<section class="my-4">
+  <pre><%= @post.content %></pre>
+</section>
 
 <.back navigate={~p"/topics/#{@post.topic_id}"}>Back to topic</.back>
 

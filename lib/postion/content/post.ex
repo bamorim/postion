@@ -1,11 +1,14 @@
 defmodule Postion.Content.Post do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Postion.Content.Topic
+  alias Postion.Content.Contributor
 
   schema "posts" do
     field :title, :string
     field :content, :string
-    field :topic_id, :id
+    belongs_to :topic, Topic
+    has_many :contributors, Contributor
 
     timestamps(type: :utc_datetime)
   end
