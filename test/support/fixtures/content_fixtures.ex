@@ -22,11 +22,19 @@ defmodule Postion.ContentFixtures do
   Generate a post.
   """
   def post_fixture(attrs \\ %{}) do
+    topic_id =
+      Map.get_lazy(attrs, :topic_id, fn ->
+        Map.get_lazy(attrs, :topic, fn ->
+          topic_fixture(Map.get(attrs, :topic_attrs, %{}))
+        end).id
+      end)
+
     {:ok, post} =
       attrs
       |> Enum.into(%{
-        content: "some content",
-        title: "some title"
+        content: "content##{System.unique_integer()}",
+        title: "post##{System.unique_integer()}",
+        topic_id: topic_id
       })
       |> Postion.Content.create_post()
 

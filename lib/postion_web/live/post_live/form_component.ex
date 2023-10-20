@@ -21,6 +21,7 @@ defmodule PostionWeb.PostLive.FormComponent do
       >
         <.input field={@form[:title]} type="text" label="Title" />
         <.input field={@form[:content]} type="text" label="Content" />
+        <.input field={@form[:topic_id]} type="hidden" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Post</.button>
         </:actions>
@@ -31,7 +32,7 @@ defmodule PostionWeb.PostLive.FormComponent do
 
   @impl true
   def update(%{post: post} = assigns, socket) do
-    changeset = Content.change_post(post)
+    changeset = Content.change_post(post, Map.get(assigns, :changes, %{}))
 
     {:ok,
      socket

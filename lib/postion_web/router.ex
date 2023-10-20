@@ -75,10 +75,7 @@ defmodule PostionWeb.Router do
       live "/topics/:id", TopicLive.Show, :show
       live "/topics/:id/edit", TopicLive.Show, :edit
       live "/topics/:id/children/new", TopicLive.Show, :new_child
-
-      live "/posts", PostLive.Index, :index
-      live "/posts/new", PostLive.Index, :new
-      live "/posts/:id/edit", PostLive.Index, :edit
+      live "/topics/:id/posts/new", TopicLive.Show, :new_post
 
       live "/posts/:id", PostLive.Show, :show
       live "/posts/:id/show/edit", PostLive.Show, :edit

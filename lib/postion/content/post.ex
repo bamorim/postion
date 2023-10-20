@@ -13,7 +13,7 @@ defmodule Postion.Content.Post do
   @doc false
   def changeset(post, attrs) do
     post
-    |> cast(attrs, [:title, :content])
-    |> validate_required([:title, :content])
+    |> cast(attrs, [:title, :content, :topic_id])
+    |> validate_required([:title, :content, :topic_id])
   end
 end

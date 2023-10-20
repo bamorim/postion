@@ -5,13 +5,20 @@ defmodule PostionWeb.TopicLiveTest do
   import Postion.ContentFixtures
   import Postion.AccountsFixtures
 
-  @create_attrs %{name: "some name"}
-  @update_attrs %{name: "some updated name"}
-  @invalid_attrs %{name: nil}
+  @create_topic_attrs %{name: "some name"}
+  @update_topic_attrs %{name: "some updated name"}
+  @invalid_topic_attrs %{name: nil}
+  @create_post_attrs %{title: "some title", content: "some content"}
+  @invalid_post_attrs %{title: nil, content: nil}
 
   defp create_topic(_) do
     topic = topic_fixture()
     %{topic: topic}
+  end
+
+  defp create_post(context) do
+    post = post_fixture(Map.take(context, [:topic]))
+    %{post: post}
   end
 
   defp login(%{conn: conn}) do
@@ -48,11 +55,11 @@ defmodule PostionWeb.TopicLiveTest do
       assert_patch(index_live, ~p"/topics/new")
 
       assert index_live
-             |> form("#topic-form", topic: @invalid_attrs)
+             |> form("#topic-form", topic: @invalid_topic_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       assert index_live
-             |> form("#topic-form", topic: @create_attrs)
+             |> form("#topic-form", topic: @create_topic_attrs)
              |> render_submit()
 
       assert_patch(index_live, ~p"/topics")
@@ -94,11 +101,11 @@ defmodule PostionWeb.TopicLiveTest do
       assert_patch(show_live, ~p"/topics/#{topic}/edit")
 
       assert show_live
-             |> form("#topic-form", topic: @invalid_attrs)
+             |> form("#topic-form", topic: @invalid_topic_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       assert show_live
-             |> form("#topic-form", topic: @update_attrs)
+             |> form("#topic-form", topic: @update_topic_attrs)
              |> render_submit()
 
       assert_patch(show_live, ~p"/topics/#{topic}")
@@ -120,7 +127,7 @@ defmodule PostionWeb.TopicLiveTest do
       assert_patch(show_live, ~p"/topics/#{topic}/children/new")
 
       assert show_live
-             |> form("#topic-form", topic: @invalid_attrs)
+             |> form("#topic-form", topic: @invalid_topic_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       child_topic_name = "topic##{System.unique_integer()}"
@@ -156,6 +163,44 @@ defmodule PostionWeb.TopicLiveTest do
       assert show_live |> element("a", "Delete") |> render_click()
 
       assert_redirect(show_live, ~p"/topics/#{topic}")
+    end
+  end
+
+  describe "Show - Post List and Actions" do
+    setup [:create_topic, :create_post, :login]
+
+    test "lists all posts", %{conn: conn, topic: topic, post: post} do
+      {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
+
+      assert show_live
+             |> element("*", post.title)
+             |> has_element?()
+    end
+
+    test "saves new post", %{conn: conn, topic: topic} do
+      {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
+
+      assert show_live |> element("a", "New Post") |> render_click()
+
+      assert show_live
+             |> element("h1", "New Post")
+             |> has_element?()
+
+      assert_patch(show_live, ~p"/topics/#{topic}/posts/new")
+
+      assert show_live
+             |> form("#post-form", post: @invalid_post_attrs)
+             |> render_change() =~ "can&#39;t be blank"
+
+      assert show_live
+             |> form("#post-form", post: @create_post_attrs)
+             |> render_submit()
+
+      assert_patch(show_live, ~p"/topics/#{topic}")
+
+      html = render(show_live)
+      assert html =~ "Post created successfully"
+      assert html =~ "some title"
     end
   end
 end

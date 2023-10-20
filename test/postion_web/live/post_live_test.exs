@@ -5,12 +5,16 @@ defmodule PostionWeb.PostLiveTest do
   import Postion.ContentFixtures
   import Postion.AccountsFixtures
 
-  @create_attrs %{title: "some title", content: "some content"}
   @update_attrs %{title: "some updated title", content: "some updated content"}
   @invalid_attrs %{title: nil, content: nil}
 
-  defp create_post(_) do
-    post = post_fixture()
+  defp create_topic(_) do
+    topic = topic_fixture()
+    %{topic: topic}
+  end
+
+  defp create_post(context) do
+    post = post_fixture(Map.take(context, [:topic]))
     %{post: post}
   end
 
@@ -19,72 +23,8 @@ defmodule PostionWeb.PostLiveTest do
     %{conn: log_in_user(conn, user), user: user}
   end
 
-  describe "Index" do
-    setup [:create_post, :login]
-
-    test "lists all posts", %{conn: conn, post: post} do
-      {:ok, _index_live, html} = live(conn, ~p"/posts")
-
-      assert html =~ "Listing Posts"
-      assert html =~ post.title
-    end
-
-    test "saves new post", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/posts")
-
-      assert index_live |> element("a", "New Post") |> render_click() =~
-               "New Post"
-
-      assert_patch(index_live, ~p"/posts/new")
-
-      assert index_live
-             |> form("#post-form", post: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#post-form", post: @create_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/posts")
-
-      html = render(index_live)
-      assert html =~ "Post created successfully"
-      assert html =~ "some title"
-    end
-
-    test "updates post in listing", %{conn: conn, post: post} do
-      {:ok, index_live, _html} = live(conn, ~p"/posts")
-
-      assert index_live |> element("#posts-#{post.id} a", "Edit") |> render_click() =~
-               "Edit Post"
-
-      assert_patch(index_live, ~p"/posts/#{post}/edit")
-
-      assert index_live
-             |> form("#post-form", post: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#post-form", post: @update_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/posts")
-
-      html = render(index_live)
-      assert html =~ "Post updated successfully"
-      assert html =~ "some updated title"
-    end
-
-    test "deletes post in listing", %{conn: conn, post: post} do
-      {:ok, index_live, _html} = live(conn, ~p"/posts")
-
-      assert index_live |> element("#posts-#{post.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#posts-#{post.id}")
-    end
-  end
-
   describe "Show" do
-    setup [:create_post, :login]
+    setup [:create_topic, :create_post, :login]
 
     test "displays post", %{conn: conn, post: post} do
       {:ok, _show_live, html} = live(conn, ~p"/posts/#{post}")
@@ -114,6 +54,18 @@ defmodule PostionWeb.PostLiveTest do
       html = render(show_live)
       assert html =~ "Post updated successfully"
       assert html =~ "some updated title"
+    end
+
+    test "deletes post from page", %{conn: conn, post: post} do
+      {:ok, show_live, _html} = live(conn, ~p"/posts/#{post}")
+
+      assert show_live |> element("a", "Delete") |> render_click()
+
+      assert_redirect(show_live, ~p"/topics/#{post.topic_id}")
+
+      {:ok, index_live, _html} = live(conn, ~p"/topics/#{post.topic_id}")
+
+      refute has_element?(index_live, "#posts-#{post.id}")
     end
   end
 end

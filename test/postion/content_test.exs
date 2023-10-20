@@ -93,11 +93,17 @@ defmodule Postion.ContentTest do
 
     import Postion.ContentFixtures
 
-    @invalid_attrs %{title: nil, content: nil}
+    @invalid_attrs %{title: nil, content: nil, topic_id: nil}
 
     test "list_posts/0 returns all posts" do
       post = post_fixture()
       assert Content.list_posts() == [post]
+    end
+
+    test "list_posts/1 returns posts by topic" do
+      post = post_fixture()
+      _other_post = post_fixture()
+      assert Content.list_posts(topic_id: post.topic_id) == [post]
     end
 
     test "get_post!/1 returns the post with given id" do
@@ -106,7 +112,8 @@ defmodule Postion.ContentTest do
     end
 
     test "create_post/1 with valid data creates a post" do
-      valid_attrs = %{title: "some title", content: "some content"}
+      topic = topic_fixture()
+      valid_attrs = %{title: "some title", content: "some content", topic_id: topic.id}
 
       assert {:ok, %Post{} = post} = Content.create_post(valid_attrs)
       assert post.title == "some title"

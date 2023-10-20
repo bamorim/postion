@@ -8,7 +8,8 @@ defmodule Postion.Content do
 
   alias Postion.Content.Topic
 
-  @type filter() :: {:parent_id, pos_integer() | nil}
+  @type topic_filter() :: {:parent_id, pos_integer() | nil}
+  @type post_filter() :: {:topic_id, pos_integer()}
 
   @doc """
   Returns the list of topics.
@@ -22,7 +23,7 @@ defmodule Postion.Content do
       [%Topic{}, ...]
 
   """
-  @spec list_topics([filter()]) :: [%Topic{}]
+  @spec list_topics([topic_filter()]) :: [%Topic{}]
   def list_topics(filters \\ []) do
     filters
     |> Enum.reduce(Topic, &filter_topic(&2, &1))
@@ -129,8 +130,14 @@ defmodule Postion.Content do
       [%Post{}, ...]
 
   """
-  def list_posts do
-    Repo.all(Post)
+  def list_posts(filters \\ []) do
+    filters
+    |> Enum.reduce(Post, &filter_post(&2, &1))
+    |> Repo.all()
+  end
+
+  defp filter_post(query, {:topic_id, topic_id}) do
+    where(query, topic_id: ^topic_id)
   end
 
   @doc """
@@ -154,10 +161,10 @@ defmodule Postion.Content do
 
   ## Examples
 
-      iex> create_post(%{field: value})
+      iex> create_post(%Topic{}, %{field: value})
       {:ok, %Post{}}
 
-      iex> create_post(%{field: bad_value})
+      iex> create_post(%Topic{}, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """

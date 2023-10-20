@@ -7,6 +7,9 @@
     <.link patch={~p"/topics/#{@topic}/children/new"} phx-click={JS.push_focus()}>
       <.button>New Topic</.button>
     </.link>
+    <.link patch={~p"/topics/#{@topic}/posts/new"}>
+      <.button>New Post</.button>
+    </.link>
     <.link phx-click={JS.push("delete")} data-confirm="Are you sure?">
       <.button>Delete</.button>
     </.link>
@@ -24,6 +27,21 @@
     row_click={fn {_id, topic} -> JS.navigate(~p"/topics/#{topic}") end}
   >
     <:col :let={{_id, topic}} label="Name"><%= topic.name %></:col>
+  </.table>
+</section>
+
+<section class="my-4">
+  <h2 class="text-m font-semibold leading-8 text-zinc-800">
+    Posts
+  </h2>
+
+  <.table
+    id="posts"
+    rows={@streams.posts}
+    row_click={fn {_id, post} -> JS.navigate(~p"/posts/#{post}") end}
+  >
+    <:col :let={{_id, post}} label="Title"><%= post.title %></:col>
+    <:col :let={{_id, post}} label="Content"><%= post.content %></:col>
   </.table>
 </section>
 
@@ -47,7 +65,7 @@
 
 <.modal
   :if={@live_action == :new_child}
-  id="topic-modal"
+  id="child-topic-modal"
   show
   on_cancel={JS.patch(~p"/topics/#{@topic}")}
 >
@@ -58,6 +76,23 @@
     action={:new}
     topic={@child_topic}
     changes={%{parent_id: @topic.id}}
+    patch={~p"/topics/#{@topic}"}
+  />
+</.modal>
+
+<.modal
+  :if={@live_action == :new_post}
+  id="post-modal"
+  show
+  on_cancel={JS.patch(~p"/topics/#{@topic}")}
+>
+  <.live_component
+    module={PostionWeb.PostLive.FormComponent}
+    id={:new}
+    title={@page_title}
+    action={:new}
+    post={@post}
+    changes={%{topic_id: @topic.id}}
     patch={~p"/topics/#{@topic}"}
   />
 </.modal>

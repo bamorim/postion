@@ -5,6 +5,9 @@
     <.link patch={~p"/posts/#{@post}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit post</.button>
     </.link>
+    <.link phx-click={JS.push("delete")} data-confirm="Are you sure?">
+      <.button>Delete</.button>
+    </.link>
   </:actions>
 </.header>
 
@@ -13,7 +16,7 @@
   <:item title="Content"><%= @post.content %></:item>
 </.list>
 
-<.back navigate={~p"/posts"}>Back to posts</.back>
+<.back navigate={~p"/topics/#{@post.topic_id}"}>Back to topic</.back>
 
 <.modal :if={@live_action == :edit} id="post-modal" show on_cancel={JS.patch(~p"/posts/#{@post}")}>
   <.live_component
