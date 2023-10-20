@@ -25,7 +25,7 @@ defmodule PostionWeb.TopicLiveTest do
     test "lists all topics", %{conn: conn, topic: topic} do
       {:ok, _index_live, html} = live(conn, ~p"/topics")
 
-      assert html =~ "Listing Topics"
+      assert html =~ "Topics"
       assert html =~ topic.name
     end
 
@@ -39,8 +39,11 @@ defmodule PostionWeb.TopicLiveTest do
     test "saves new topic", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/topics")
 
-      assert index_live |> element("a", "New Topic") |> render_click() =~
-               "New Topic"
+      index_live |> element("a", "New Topic") |> render_click()
+
+      assert index_live
+             |> element("h1", "New Topic")
+             |> has_element?()
 
       assert_patch(index_live, ~p"/topics/new")
 
@@ -82,8 +85,11 @@ defmodule PostionWeb.TopicLiveTest do
     test "updates topic within modal", %{conn: conn, topic: topic} do
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Topic"
+      show_live |> element("a", "Edit") |> render_click()
+
+      assert show_live
+             |> element("h1", "Edit Topic")
+             |> has_element?()
 
       assert_patch(show_live, ~p"/topics/#{topic}/edit")
 
@@ -105,8 +111,11 @@ defmodule PostionWeb.TopicLiveTest do
     test "saves new child topic", %{conn: conn, topic: topic} do
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
 
-      assert show_live |> element("a", "New child topic") |> render_click() =~
-               "New Child Topic"
+      show_live |> element("a", "New Topic") |> render_click()
+
+      assert show_live
+             |> element("h1", "New Topic")
+             |> has_element?()
 
       assert_patch(show_live, ~p"/topics/#{topic}/children/new")
 
