@@ -182,17 +182,26 @@ defmodule Postion.Content do
 
   ## Examples
 
-      iex> update_post(post, %{field: new_value})
+      iex> update_post(user, post, %{field: new_value})
       {:ok, %Post{}}
 
-      iex> update_post(post, %{field: bad_value})
+      iex> update_post(user, post, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_post(%Post{} = post, attrs) do
-    post
-    |> Post.changeset(attrs)
-    |> Repo.update()
+  def update_post(%User{id: user_id}, %Post{} = post, attrs) do
+    changeset = Post.changeset(post, attrs)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:post, changeset)
+    |> Ecto.Multi.insert(:contributor, %Contributor{user_id: user_id, post_id: post.id},
+      on_conflict: :nothing
+    )
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{post: post}} -> {:ok, Repo.preload(post, :contributors, force: true)}
+      {:error, :post, changeset, _} -> {:error, changeset}
+    end
   end
 
   @doc """

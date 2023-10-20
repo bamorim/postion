@@ -1,6 +1,7 @@
 defmodule Postion.ContentTest do
   use Postion.DataCase
 
+  alias Postion.Accounts
   alias Postion.Content
   alias Postion.Content.Contributor
   alias Postion.Content.Post
@@ -124,18 +125,38 @@ defmodule Postion.ContentTest do
       assert {:error, %Ecto.Changeset{}} = Content.create_post(user_fixture(), @invalid_attrs)
     end
 
-    test "update_post/2 with valid data updates the post" do
+    test "update_post/3 with valid data updates the post" do
       post = post_fixture()
+      old_contributors = post.contributors
+      user = user_fixture()
       update_attrs = %{title: "some updated title", content: "some updated content"}
 
-      assert {:ok, %Post{} = post} = Content.update_post(post, update_attrs)
+      assert {:ok, %Post{} = post} = Content.update_post(user, post, update_attrs)
       assert post.title == "some updated title"
       assert post.content == "some updated content"
+
+      # Add user to list of contributors
+      assert %Contributor{author: false} = Enum.find(post.contributors, &(&1.user_id == user.id))
+
+      for contributor <- old_contributors do
+        assert contributor in post.contributors
+      end
     end
 
-    test "update_post/2 with invalid data returns error changeset" do
+    test "update_post/3 don't add new contributor if user is already contributor" do
       post = post_fixture()
-      assert {:error, %Ecto.Changeset{}} = Content.update_post(post, @invalid_attrs)
+      [contributor] = post.contributors
+      user = Accounts.get_user!(contributor.user_id)
+      update_attrs = %{title: "some updated title"}
+
+      assert {:ok, %Post{} = post} = Content.update_post(user, post, update_attrs)
+      assert post.contributors == [contributor]
+    end
+
+    test "update_post/3 with invalid data returns error changeset" do
+      post = post_fixture()
+      user = user_fixture()
+      assert {:error, %Ecto.Changeset{}} = Content.update_post(user, post, @invalid_attrs)
       assert take_fields(post) == post.id |> Content.get_post!() |> take_fields()
     end
 

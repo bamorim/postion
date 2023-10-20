@@ -55,7 +55,7 @@ defmodule PostionWeb.PostLive.FormComponent do
   end
 
   defp save_post(socket, :edit, post_params) do
-    case Content.update_post(socket.assigns.post, post_params) do
+    case Content.update_post(socket.assigns.author, socket.assigns.post, post_params) do
       {:ok, post} ->
         notify_parent({:saved, post})
 
