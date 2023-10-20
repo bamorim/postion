@@ -1,5 +1,20 @@
 <.header>
   <%= @post.title %>
+  <:subtitle>
+    Contributors:
+    <%= for contributor <- @post.contributors do %>
+      <.live_component
+        id={contributor.user_id}
+        module={PostionWeb.UserBadgeComponent}
+        user_id={contributor.user_id}
+      />
+      <%= if contributor.author do %>
+        (Author);
+      <% else %>
+        ;
+      <% end %>
+    <% end %>
+  </:subtitle>
   <:actions>
     <.link patch={~p"/posts/#{@post}/show/edit"} phx-click={JS.push_focus()}>
       <.button>Edit post</.button>
