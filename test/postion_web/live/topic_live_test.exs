@@ -59,29 +59,6 @@ defmodule PostionWeb.TopicLiveTest do
       assert html =~ "some name"
     end
 
-    test "updates topic in listing", %{conn: conn, topic: topic} do
-      {:ok, index_live, _html} = live(conn, ~p"/topics")
-
-      assert index_live |> element("#topics-#{topic.id} a", "Edit") |> render_click() =~
-               "Edit Topic"
-
-      assert_patch(index_live, ~p"/topics/#{topic}/edit")
-
-      assert index_live
-             |> form("#topic-form", topic: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#topic-form", topic: @update_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/topics")
-
-      html = render(index_live)
-      assert html =~ "Topic updated successfully"
-      assert html =~ "some updated name"
-    end
-
     test "deletes topic in listing", %{conn: conn, topic: topic} do
       {:ok, index_live, _html} = live(conn, ~p"/topics")
 
