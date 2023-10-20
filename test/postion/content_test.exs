@@ -95,19 +95,18 @@ defmodule Postion.ContentTest do
 
     test "list_posts/0 returns all posts" do
       post = post_fixture()
-      assert Enum.map(Content.list_posts(), &take_fields/1) == [take_fields(post)]
+      assert Content.list_posts() == [post]
     end
 
     test "list_posts/1 returns posts by topic" do
       post = post_fixture()
       _other_post = post_fixture()
-      returned_posts = Content.list_posts(topic_id: post.topic_id)
-      assert Enum.map(returned_posts, &take_fields/1) == [take_fields(post)]
+      assert Content.list_posts(topic_id: post.topic_id) == [post]
     end
 
     test "get_post!/1 returns the post with given id" do
       post = post_fixture()
-      assert post.id |> Content.get_post!() |> take_fields() == take_fields(post)
+      assert Content.get_post!(post.id) == post
     end
 
     test "create_post/2 with valid data creates a post" do

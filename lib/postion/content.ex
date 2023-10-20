@@ -136,6 +136,7 @@ defmodule Postion.Content do
     filters
     |> Enum.reduce(Post, &filter_post(&2, &1))
     |> Repo.all()
+    |> Repo.preload(:contributors)
   end
 
   defp filter_post(query, {:topic_id, topic_id}) do
@@ -156,7 +157,7 @@ defmodule Postion.Content do
       ** (Ecto.NoResultsError)
 
   """
-  def get_post!(id), do: Repo.get!(Post, id)
+  def get_post!(id), do: Post |> Repo.get!(id) |> Repo.preload(:contributors)
 
   @doc """
   Creates a post.
