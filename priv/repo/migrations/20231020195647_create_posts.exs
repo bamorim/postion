@@ -5,7 +5,7 @@ defmodule Postion.Repo.Migrations.CreatePosts do
     create table(:posts) do
       add :title, :string
       add :content, :text
-      add :topic_id, references(:topics, on_delete: :nothing)
+      add :topic_id, references(:topics, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end
