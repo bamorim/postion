@@ -17,4 +17,19 @@ defmodule Postion.ContentFixtures do
 
     topic
   end
+
+  @doc """
+  Generate a post.
+  """
+  def post_fixture(attrs \\ %{}) do
+    {:ok, post} =
+      attrs
+      |> Enum.into(%{
+        content: "some content",
+        title: "some title"
+      })
+      |> Postion.Content.create_post()
+
+    post
+  end
 end
