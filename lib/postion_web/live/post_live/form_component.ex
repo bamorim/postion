@@ -20,7 +20,7 @@ defmodule PostionWeb.PostLive.FormComponent do
         phx-submit="save"
       >
         <.input field={@form[:title]} type="text" label="Title" />
-        <.input field={@form[:content]} type="text" label="Content" />
+        <.input field={@form[:content]} type="textarea" label="Content" />
         <.input field={@form[:topic_id]} type="hidden" />
         <:actions>
           <.button phx-disable-with="Saving...">Save Post</.button>
