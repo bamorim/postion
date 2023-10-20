@@ -30,12 +30,4 @@ defmodule PostionWeb.TopicLive.Index do
   def handle_info({PostionWeb.TopicLive.FormComponent, {:saved, topic}}, socket) do
     {:noreply, stream_insert(socket, :topics, topic)}
   end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    topic = Content.get_topic!(id)
-    {:ok, _} = Content.delete_topic(topic)
-
-    {:noreply, stream_delete(socket, :topics, topic)}
-  end
 end

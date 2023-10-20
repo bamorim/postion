@@ -13,19 +13,6 @@
   row_click={fn {_id, topic} -> JS.navigate(~p"/topics/#{topic}") end}
 >
   <:col :let={{_id, topic}} label="Name"><%= topic.name %></:col>
-  <:action :let={{_id, topic}}>
-    <div class="sr-only">
-      <.link navigate={~p"/topics/#{topic}"}>Show</.link>
-    </div>
-  </:action>
-  <:action :let={{id, topic}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: topic.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
-    >
-      Delete
-    </.link>
-  </:action>
 </.table>
 
 <.modal

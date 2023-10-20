@@ -58,13 +58,6 @@ defmodule PostionWeb.TopicLiveTest do
       assert html =~ "Topic created successfully"
       assert html =~ "some name"
     end
-
-    test "deletes topic in listing", %{conn: conn, topic: topic} do
-      {:ok, index_live, _html} = live(conn, ~p"/topics")
-
-      assert index_live |> element("#topics-#{topic.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#topics-#{topic.id}")
-    end
   end
 
   describe "Show" do
@@ -133,6 +126,27 @@ defmodule PostionWeb.TopicLiveTest do
       assert html =~ "Topic created successfully"
 
       assert html =~ child_topic_name
+    end
+
+    test "deletes topic from page", %{conn: conn, topic: topic} do
+      {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
+
+      assert show_live |> element("a", "Delete") |> render_click()
+
+      assert_redirect(show_live, ~p"/topics")
+
+      {:ok, index_live, _html} = live(conn, ~p"/topics")
+
+      refute has_element?(index_live, "#topics-#{topic.id}")
+    end
+
+    test "redirects back to parent topic when deleting child topic", %{conn: conn, topic: topic} do
+      child_topic = topic_fixture(%{parent_id: topic.id})
+      {:ok, show_live, _html} = live(conn, ~p"/topics/#{child_topic}")
+
+      assert show_live |> element("a", "Delete") |> render_click()
+
+      assert_redirect(show_live, ~p"/topics/#{topic}")
     end
   end
 end

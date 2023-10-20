@@ -8,6 +8,9 @@
     <.link patch={~p"/topics/#{@topic}/children/new"} phx-click={JS.push_focus()}>
       <.button>New child topic</.button>
     </.link>
+    <.link phx-click={JS.push("delete")} data-confirm="Are you sure?">
+      Delete
+    </.link>
   </:actions>
 </.header>
 

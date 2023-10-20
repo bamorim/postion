@@ -27,4 +27,17 @@ defmodule PostionWeb.TopicLive.Show do
   def handle_info({PostionWeb.TopicLive.FormComponent, {:saved, _topic}}, socket) do
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_event("delete", _, socket) do
+    {:ok, _} = Content.delete_topic(socket.assigns.topic)
+
+    case socket.assigns.topic.parent_id do
+      nil ->
+        {:noreply, redirect(socket, to: ~p"/topics")}
+
+      parent_id ->
+        {:noreply, redirect(socket, to: ~p"/topics/#{parent_id}")}
+    end
+  end
 end
