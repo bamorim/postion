@@ -7,6 +7,15 @@ defmodule Postion.Application do
 
   @impl true
   def start(_type, _args) do
+    :ok = :opentelemetry_cowboy.setup()
+    :ok = OpentelemetryPhoenix.setup()
+    :ok = OpentelemetryLiveView.setup()
+
+    :ok =
+      Postion.Repo.config()
+      |> Keyword.fetch!(:telemetry_prefix)
+      |> OpentelemetryEcto.setup()
+
     children = [
       PostionWeb.Telemetry,
       Postion.Repo,
