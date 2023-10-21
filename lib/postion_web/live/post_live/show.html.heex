@@ -27,13 +27,12 @@
         link_type="live_patch"
         to={~p"/posts/#{@post}/show/edit"}
         phx-click={JS.push_focus()}
-        label="Edit post"
-      />
-      <.dropdown_menu_item
-        phx-click={JS.push("delete")}
-        data-confirm="Are you sure?"
-        label="Delete"
-      />
+      >
+        <Heroicons.pencil_square class="w-5 h-5 text-gray-500" />Edit post
+      </.dropdown_menu_item>
+      <.dropdown_menu_item phx-click={JS.push("delete")} data-confirm="Are you sure?">
+        <Heroicons.trash class="w-5 h-5 text-gray-500" />Delete
+      </.dropdown_menu_item>
     </.dropdown>
   </:actions>
 </.header>

@@ -8,28 +8,26 @@
   <%= @topic.name %>
   <:actions>
     <.dropdown label="Actions" js_lib="live_view_js">
+      <.dropdown_menu_item link_type="live_patch" to={~p"/topics/#{@topic}/posts/new"}>
+        <Heroicons.pencil_square class="w-5 h-5 text-gray-500" />New post
+      </.dropdown_menu_item>
       <.dropdown_menu_item
         link_type="live_patch"
         to={~p"/topics/#{@topic}/edit"}
         phx-click={JS.push_focus()}
-        label="Edit topic"
-      />
+      >
+        <Heroicons.folder class="w-5 h-5 text-gray-500" />Edit topic
+      </.dropdown_menu_item>
       <.dropdown_menu_item
         link_type="live_patch"
         to={~p"/topics/#{@topic}/children/new"}
         phx-click={JS.push_focus()}
-        label="New topic"
-      />
-      <.dropdown_menu_item
-        link_type="live_patch"
-        to={~p"/topics/#{@topic}/posts/new"}
-        label="New post"
-      />
-      <.dropdown_menu_item
-        phx-click={JS.push("delete")}
-        data-confirm="Are you sure?"
-        label="Delete"
-      />
+      >
+        <Heroicons.folder_plus class="w-5 h-5 text-gray-500" />New topic
+      </.dropdown_menu_item>
+      <.dropdown_menu_item phx-click={JS.push("delete")} data-confirm="Are you sure?">
+        <Heroicons.trash class="w-5 h-5 text-gray-500" />Delete
+      </.dropdown_menu_item>
     </.dropdown>
   </:actions>
 </.header>
@@ -63,7 +61,7 @@
   </.table>
 </section>
 
-<.back navigate={@parent_path}>Back to topics</.back>
+<.back navigate={@parent_path}>Back to parent topic</.back>
 
 <.modal
   :if={@live_action == :edit}

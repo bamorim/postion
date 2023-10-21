@@ -121,6 +121,8 @@ defmodule PostionWeb do
         UserDropdownMenu,
         Menu
       }
+
+      alias PetalComponents.HeroiconsV1
     end
   end
 

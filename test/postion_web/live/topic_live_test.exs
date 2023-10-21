@@ -39,7 +39,7 @@ defmodule PostionWeb.TopicLiveTest do
     test "saves new topic", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/topics")
 
-      index_live |> element("a", "New Topic") |> render_click()
+      index_live |> element("a", "New topic") |> render_click()
 
       assert index_live
              |> element("h2", "New Topic")
