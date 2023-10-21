@@ -42,7 +42,7 @@ defmodule PostionWeb.TopicLiveTest do
       index_live |> element("a", "New Topic") |> render_click()
 
       assert index_live
-             |> element("h1", "New Topic")
+             |> element("h2", "New Topic")
              |> has_element?()
 
       assert_patch(index_live, ~p"/topics/new")
@@ -88,7 +88,7 @@ defmodule PostionWeb.TopicLiveTest do
       show_live |> element("a", "Edit") |> render_click()
 
       assert show_live
-             |> element("h1", "Edit Topic")
+             |> element("h2", "Edit Topic")
              |> has_element?()
 
       assert_patch(show_live, ~p"/topics/#{topic}/edit")
@@ -114,7 +114,7 @@ defmodule PostionWeb.TopicLiveTest do
       show_live |> element("a", "New Topic") |> render_click()
 
       assert show_live
-             |> element("h1", "New Topic")
+             |> element("h2", "New Topic")
              |> has_element?()
 
       assert_patch(show_live, ~p"/topics/#{topic}/children/new")
@@ -176,7 +176,7 @@ defmodule PostionWeb.TopicLiveTest do
       assert show_live |> element("a", "New Post") |> render_click()
 
       assert show_live
-             |> element("h1", "New Post")
+             |> element("h2", "New Post")
              |> has_element?()
 
       assert_patch(show_live, ~p"/topics/#{topic}/posts/new")

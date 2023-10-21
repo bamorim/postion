@@ -405,9 +405,9 @@ defmodule PostionWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <Typography.h1>
           <%= render_slot(@inner_block) %>
-        </h1>
+        </Typography.h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
           <%= render_slot(@subtitle) %>
         </p>

@@ -7,10 +7,9 @@ defmodule PostionWeb.TopicLive.FormComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.header>
+      <.h2>
         <%= @title %>
-        <:subtitle>Use this form to manage topic records in your database.</:subtitle>
-      </.header>
+      </.h2>
 
       <.simple_form
         for={@form}
