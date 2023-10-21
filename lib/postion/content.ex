@@ -47,9 +47,9 @@ defmodule Postion.Content do
   Returns topics in a tree format where at each level we have a map from id to a tuple of format
   {name, children}, where children is the next level at the tree.
   """
-  @spec topic_tree() :: topic_tree_result()
-  def topic_tree do
-    do_topic_tree(list_topics(), nil, 1, 5)
+  @spec topic_tree([%Topic{}]) :: topic_tree_result()
+  def topic_tree(topics \\ list_topics()) do
+    do_topic_tree(topics, nil, 1, 5)
   end
 
   defp do_topic_tree(_all_topics, _parent_id, level, level), do: %{}
