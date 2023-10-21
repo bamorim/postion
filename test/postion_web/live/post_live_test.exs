@@ -59,7 +59,7 @@ defmodule PostionWeb.PostLiveTest do
     test "deletes post from page", %{conn: conn, post: post} do
       {:ok, show_live, _html} = live(conn, ~p"/posts/#{post}")
 
-      assert show_live |> element("a", "Delete") |> render_click()
+      assert show_live |> element("button", "Delete") |> render_click()
 
       assert_redirect(show_live, ~p"/topics/#{post.topic_id}")
 

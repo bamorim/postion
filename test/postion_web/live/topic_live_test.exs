@@ -111,7 +111,7 @@ defmodule PostionWeb.TopicLiveTest do
     test "saves new child topic", %{conn: conn, topic: topic} do
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
 
-      show_live |> element("a", "New Topic") |> render_click()
+      show_live |> element("a", "New topic") |> render_click()
 
       assert show_live
              |> element("h2", "New Topic")
@@ -140,7 +140,7 @@ defmodule PostionWeb.TopicLiveTest do
     test "deletes topic from page", %{conn: conn, topic: topic} do
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
 
-      assert show_live |> element("a", "Delete") |> render_click()
+      assert show_live |> element("button", "Delete") |> render_click()
 
       assert_redirect(show_live, ~p"/topics")
 
@@ -153,7 +153,7 @@ defmodule PostionWeb.TopicLiveTest do
       child_topic = topic_fixture(%{parent_id: topic.id})
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{child_topic}")
 
-      assert show_live |> element("a", "Delete") |> render_click()
+      assert show_live |> element("button", "Delete") |> render_click()
 
       assert_redirect(show_live, ~p"/topics/#{topic}")
     end
@@ -173,7 +173,7 @@ defmodule PostionWeb.TopicLiveTest do
     test "saves new post", %{conn: conn, topic: topic} do
       {:ok, show_live, _html} = live(conn, ~p"/topics/#{topic}")
 
-      assert show_live |> element("a", "New Post") |> render_click()
+      assert show_live |> element("a", "New post") |> render_click()
 
       assert show_live
              |> element("h2", "New Post")

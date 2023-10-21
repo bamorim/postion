@@ -22,12 +22,19 @@
     <% end %>
   </:subtitle>
   <:actions>
-    <.link patch={~p"/posts/#{@post}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit post</.button>
-    </.link>
-    <.link phx-click={JS.push("delete")} data-confirm="Are you sure?">
-      <.button>Delete</.button>
-    </.link>
+    <.dropdown label="Actions" js_lib="live_view_js">
+      <.dropdown_menu_item
+        link_type="live_patch"
+        to={~p"/posts/#{@post}/show/edit"}
+        phx-click={JS.push_focus()}
+        label="Edit post"
+      />
+      <.dropdown_menu_item
+        phx-click={JS.push("delete")}
+        data-confirm="Are you sure?"
+        label="Delete"
+      />
+    </.dropdown>
   </:actions>
 </.header>
 
