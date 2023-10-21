@@ -25,9 +25,7 @@
   </:actions>
 </.header>
 
-<section class="my-4">
-  <pre><%= @post.content %></pre>
-</section>
+<.markdown input={@post.content} />
 
 <.back navigate={~p"/topics/#{@post.topic_id}"}>Back to topic</.back>
 

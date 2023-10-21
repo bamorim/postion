@@ -1,19 +1,28 @@
 <.header>
   Topics
   <:actions>
-    <.link patch={~p"/topics/new"}>
+    <.link patch={~p"/topics/new"} phx-click={JS.push_focus()}>
       <.button>New Topic</.button>
     </.link>
+    <.button
+      label="View As Tree"
+      to={~p"/topic_tree"}
+      link_type="live_patch"
+      variant="outline"
+      color="white"
+    />
   </:actions>
 </.header>
 
-<.table
-  id="topics"
-  rows={@streams.topics}
-  row_click={fn {_id, topic} -> JS.navigate(~p"/topics/#{topic}") end}
->
-  <:col :let={{_id, topic}} label="Name"><%= topic.name %></:col>
-</.table>
+<section class="my-4">
+  <.table
+    id="topics"
+    rows={@streams.topics}
+    row_click={fn {_id, topic} -> JS.navigate(~p"/topics/#{topic}") end}
+  >
+    <:col :let={{_id, topic}} label="Name"><%= topic.name %></:col>
+  </.table>
+</section>
 
 <.modal
   :if={@live_action in [:new, :edit]}

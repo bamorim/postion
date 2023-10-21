@@ -70,6 +70,7 @@ defmodule PostionWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       live "/topics", TopicLive.Index, :index
+      live "/topic_tree", TopicLive.Tree, :tree
       live "/topics/new", TopicLive.Index, :new
 
       live "/topics/:id", TopicLive.Show, :show

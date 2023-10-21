@@ -92,6 +92,35 @@ defmodule PostionWeb do
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
+
+      # Petal
+      import PetalComponents.{
+        Accordion,
+        Alert,
+        Avatar,
+        Badge,
+        Breadcrumbs,
+        Button,
+        Card,
+        Container,
+        Dropdown,
+        Field,
+        Form,
+        Icon,
+        # Input,
+        Link,
+        Loading,
+        # Modal,
+        Pagination,
+        Progress,
+        Rating,
+        SlideOver,
+        # Table,
+        Tabs,
+        Typography,
+        UserDropdownMenu,
+        Menu
+      }
     end
   end
 

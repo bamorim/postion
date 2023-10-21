@@ -53,7 +53,7 @@ defmodule Postion.Content do
 
   defp do_topic_tree(all_topics, parent_id) do
     all_topics
-    |> Enum.filter(& &1.parent_id == parent_id)
+    |> Enum.filter(&(&1.parent_id == parent_id))
     |> Map.new(&{&1.id, {&1.name, do_topic_tree(all_topics, &1.id)}})
   end
 

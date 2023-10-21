@@ -46,6 +46,7 @@ defmodule Postion.ContentTest do
                     ^id_2_1 => {^name_2_1, empty}
                   }}
              } = Content.topic_tree()
+
       assert map_size(empty) == 0
     end
 

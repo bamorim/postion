@@ -6,8 +6,11 @@ defmodule PostionWeb.TopicLive.Show do
   alias Postion.Content.Post
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
+  def mount(%{"id" => id}, _session, socket) do
+    {:ok,
+     socket
+     |> stream(:child_topics, Content.list_topics(parent_id: id))
+     |> stream(:posts, Content.list_posts(topic_id: id))}
   end
 
   @impl true
@@ -26,9 +29,7 @@ defmodule PostionWeb.TopicLive.Show do
      |> assign(:parent_path, parent_path)
      |> assign(:topic, topic)
      |> assign(:child_topic, %Topic{})
-     |> stream(:child_topics, Content.list_topics(parent_id: id))
-     |> assign(:post, %Post{})
-     |> stream(:posts, Content.list_posts(topic_id: id))}
+     |> assign(:post, %Post{})}
   end
 
   defp page_title(:show), do: "Show Topic"
@@ -37,12 +38,16 @@ defmodule PostionWeb.TopicLive.Show do
   defp page_title(:new_post), do: "New Post"
 
   @impl true
-  def handle_info({PostionWeb.TopicLive.FormComponent, {:saved, _topic}}, socket) do
-    {:noreply, socket}
+  def handle_info({PostionWeb.TopicLive.FormComponent, {:saved, topic}}, socket) do
+    if topic.id != socket.assigns.topic.id do
+      {:noreply, stream_insert(socket, :child_topics, topic)}
+    else
+      {:noreply, socket}
+    end
   end
 
-  def handle_info({PostionWeb.PostLive.FormComponent, {:saved, _topic}}, socket) do
-    {:noreply, socket}
+  def handle_info({PostionWeb.PostLive.FormComponent, {:saved, post}}, socket) do
+    {:noreply, stream_insert(socket, :posts, post)}
   end
 
   @impl true
