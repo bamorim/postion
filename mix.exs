@@ -61,7 +61,9 @@ defmodule Postion.MixProject do
       {:opentelemetry_cowboy, "~> 0.2"},
       {:petal_components, "~> 1.0"},
       {:html_sanitize_ex, "~> 1.4.3"},
-      {:mdex, "~> 0.1"}
+      {:mdex, "~> 0.1"},
+      {:faker, "~> 0.17"},
+      {:owl, "~> 0.8.0"}
     ]
   end
 

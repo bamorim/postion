@@ -3,4 +3,8 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+.pc-breadcrumbs {
+  flex-wrap: wrap;
+}
+
 /* This file is for your main application CSS */
