@@ -7,10 +7,13 @@ defmodule PostionWeb.TopicLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
+    posts = Content.list_posts(topic_id: id, limit: 50)
+
     {:ok,
      socket
+     |> assign(:post_offset, length(posts))
      |> stream(:child_topics, Content.list_topics(parent_id: id))
-     |> stream(:posts, Content.list_posts(topic_id: id))}
+     |> stream(:posts, posts)}
   end
 
   @impl true

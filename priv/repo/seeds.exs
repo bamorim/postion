@@ -288,7 +288,7 @@ defmodule ProblemSeed do
     topic = Repo.insert!(%Topic{name: "Huge Topic", parent_id: parent_id})
 
     base =
-      from(gen in fragment("select generate_series(?::integer, ?::integer) as num", ^1, ^10_000))
+      from(gen in fragment("select generate_series(?::integer, ?::integer) as num", ^1, ^100_000))
 
     query =
       select(base, [gen], %{

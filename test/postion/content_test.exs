@@ -125,13 +125,24 @@ defmodule Postion.ContentTest do
 
     test "list_posts/0 returns all posts" do
       post = post_fixture()
-      assert Content.list_posts() == [post]
+      assert Content.list_posts(preload: [:contributors]) == [post]
     end
 
     test "list_posts/1 returns posts by topic" do
       post = post_fixture()
       _other_post = post_fixture()
-      assert Content.list_posts(topic_id: post.topic_id) == [post]
+      assert Content.list_posts(topic_id: post.topic_id, preload: [:contributors]) == [post]
+    end
+
+    test "list_posts/1 can paginate" do
+      posts = Enum.map(1..10, fn _ -> post_fixture() end)
+      assert [p1] = Content.list_posts(limit: 1)
+      assert [p2, p3] = Content.list_posts(limit: 2, offset: 1)
+      assert [p4, p5, p6] = Content.list_posts(limit: 3, offset: 3)
+      assert [p7, p8, p9, p10] = Content.list_posts(limit: 10, offset: 6)
+      all_returned_ids = MapSet.new([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10], & &1.id)
+      assert MapSet.size(all_returned_ids) == 10
+      assert MapSet.new(posts, & &1.id) == all_returned_ids
     end
 
     test "get_post!/1 returns the post with given id" do

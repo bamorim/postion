@@ -12,6 +12,7 @@ defmodule Postion.Content do
 
   @type topic_filter() :: {:parent_id, pos_integer() | nil}
   @type post_filter() :: {:topic_id, pos_integer()}
+  @type pagination_opt() :: {:limit, pos_integer()} | {:offset, non_neg_integer()}
 
   @doc """
   Returns the list of topics.
@@ -48,13 +49,15 @@ defmodule Postion.Content do
   """
   @spec topic_tree() :: topic_tree_result()
   def topic_tree do
-    do_topic_tree(list_topics(), nil)
+    do_topic_tree(list_topics(), nil, 1, 5)
   end
 
-  defp do_topic_tree(all_topics, parent_id) do
+  defp do_topic_tree(_all_topics, _parent_id, level, level), do: %{}
+
+  defp do_topic_tree(all_topics, parent_id, level, max_level) do
     all_topics
     |> Enum.filter(&(&1.parent_id == parent_id))
-    |> Map.new(&{&1.id, {&1.name, do_topic_tree(all_topics, &1.id)}})
+    |> Map.new(&{&1.id, {&1.name, do_topic_tree(all_topics, &1.id, level + 1, max_level)}})
   end
 
   @doc """
@@ -149,11 +152,17 @@ defmodule Postion.Content do
       [%Post{}, ...]
 
   """
-  def list_posts(filters \\ []) do
+  @spec list_posts([post_filter() | pagination_opt()]) :: [%Post{}]
+  def list_posts(opts \\ []) do
+    {opts, filters} = Keyword.split(opts, [:limit, :offset, :preload])
+
     filters
     |> Enum.reduce(Post, &filter_post(&2, &1))
+    |> limit(^Keyword.get(opts, :limit, 100))
+    |> offset(^Keyword.get(opts, :offset, 0))
+    |> order_by([p], desc: p.updated_at, desc: p.id)
     |> Repo.all()
-    |> Repo.preload(:contributors)
+    |> Repo.preload(Keyword.get(opts, :preload, []))
   end
 
   defp filter_post(query, {:topic_id, topic_id}) do
