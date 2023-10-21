@@ -36,13 +36,6 @@ defmodule PostionWeb.TopicLiveTest do
       assert html =~ topic.name
     end
 
-    test "don't show non-root topics", %{conn: conn, topic: topic} do
-      child_topic = topic_fixture(%{parent_id: topic.id, name: "child name"})
-      {:ok, _index_live, html} = live(conn, ~p"/topics")
-
-      refute html =~ child_topic.name
-    end
-
     test "saves new topic", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, ~p"/topics")
 

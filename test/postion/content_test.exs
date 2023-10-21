@@ -21,6 +21,34 @@ defmodule Postion.ContentTest do
       assert MapSet.new(topics, & &1.id) == MapSet.new([topic.id, child_topic.id])
     end
 
+    test "topic_tree/0 returns all topics in a tree" do
+      %{id: id_1, name: name_1} = topic_fixture()
+      %{id: id_2, name: name_2} = topic_fixture()
+      %{id: id_1_1, name: name_1_1} = topic_fixture(%{parent_id: id_1})
+      %{id: id_1_2, name: name_1_2} = topic_fixture(%{parent_id: id_1})
+      %{id: id_1_2_1, name: name_1_2_1} = topic_fixture(%{parent_id: id_1_2})
+      %{id: id_2_1, name: name_2_1} = topic_fixture(%{parent_id: id_2})
+
+      assert %{
+               ^id_1 =>
+                 {^name_1,
+                  %{
+                    ^id_1_1 => {^name_1_1, empty},
+                    ^id_1_2 =>
+                      {^name_1_2,
+                       %{
+                         ^id_1_2_1 => {^name_1_2_1, empty}
+                       }}
+                  }},
+               ^id_2 =>
+                 {^name_2,
+                  %{
+                    ^id_2_1 => {^name_2_1, empty}
+                  }}
+             } = Content.topic_tree()
+      assert map_size(empty) == 0
+    end
+
     test "list_topics/1 can filter child topics by parent" do
       topic = topic_fixture()
       child_topic = topic_fixture(%{parent_id: topic.id})

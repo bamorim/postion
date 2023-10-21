@@ -40,6 +40,23 @@ defmodule Postion.Content do
     where(query, parent_id: ^parent_id)
   end
 
+  @type topic_tree_result() :: %{required(pos_integer()) => {String.t(), topic_tree_result()}}
+
+  @doc """
+  Returns topics in a tree format where at each level we have a map from id to a tuple of format
+  {name, children}, where children is the next level at the tree.
+  """
+  @spec topic_tree() :: topic_tree_result()
+  def topic_tree do
+    do_topic_tree(list_topics(), nil)
+  end
+
+  defp do_topic_tree(all_topics, parent_id) do
+    all_topics
+    |> Enum.filter(& &1.parent_id == parent_id)
+    |> Map.new(&{&1.id, {&1.name, do_topic_tree(all_topics, &1.id)}})
+  end
+
   @doc """
   Gets a single topic.
 
