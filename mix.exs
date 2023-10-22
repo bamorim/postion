@@ -58,7 +58,6 @@ defmodule Postion.MixProject do
       {:opentelemetry_ecto, "~> 1.0"},
       {:opentelemetry_liveview, "~> 1.0.0-rc.4"},
       {:opentelemetry_phoenix, "~> 1.0"},
-      {:opentelemetry_cowboy, "~> 0.2"},
       {:petal_components, "~> 1.0"},
       {:html_sanitize_ex, "~> 1.4.3"},
       {:mdex, "~> 0.1"},
