@@ -32,7 +32,7 @@ services:
     volumes:
       - ./extsvc/jwt.crt:/home/ballerina/jwt.crt
       - ./extsvc/jwt.key:/home/ballerina/jwt.key
-      - ./extsvc/ExampleConfig.toml:/home/ballerina/Config.toml
+      - ./extsvc/DockerConfig.toml:/home/ballerina/Config.toml
     ports:
       - "8080:8080"
 volumes:

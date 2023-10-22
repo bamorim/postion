@@ -6,7 +6,12 @@ defmodule PostionWeb.TopicLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :topics, Content.list_topics(parent_id: nil))}
+    show_tree = Postion.FeatureFlags.enabled?("TREE_VIEW", socket.assigns.current_user.id)
+
+    {:ok,
+     socket
+     |> assign(:show_tree, show_tree)
+     |> stream(:topics, Content.list_topics(parent_id: nil))}
   end
 
   @impl true

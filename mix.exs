@@ -63,7 +63,11 @@ defmodule Postion.MixProject do
       {:mdex, "~> 0.1"},
       {:faker, "~> 0.17"},
       {:owl, "~> 0.8.0"},
-      {:eflambe, "~> 0.3.0"}
+      {:eflambe, "~> 0.3.0"},
+      {:knigge, "~> 1.4"},
+      {:hammox, "~> 0.7", only: :test},
+      {:req, "~> 0.3.0"},
+      {:opentelemetry_req, "~> 0.1.2"}
     ]
   end
 

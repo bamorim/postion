@@ -4,6 +4,9 @@ defmodule PostionWeb.TopicLiveTest do
   import Phoenix.LiveViewTest
   import Postion.ContentFixtures
   import Postion.AccountsFixtures
+  import Hammox
+
+  setup [:verify_on_exit!]
 
   @create_topic_attrs %{name: "some name"}
   @update_topic_attrs %{name: "some updated name"}
@@ -60,6 +63,25 @@ defmodule PostionWeb.TopicLiveTest do
       html = render(index_live)
       assert html =~ "Topic created successfully"
       assert html =~ "some name"
+    end
+
+    test "renders tree view link only if feature flag is enabled", %{
+      conn: conn,
+      user: %{id: user_id}
+    } do
+      Hammox.expect(Postion.FeatureFlagsMock, :enabled?, 2, fn "TREE_VIEW", ^user_id -> false end)
+      {:ok, index_live, _html} = live(conn, ~p"/topics")
+
+      refute index_live
+             |> element("a", "View As Tree")
+             |> has_element?()
+
+      Hammox.expect(Postion.FeatureFlagsMock, :enabled?, 2, fn "TREE_VIEW", ^user_id -> true end)
+      {:ok, index_live, _html} = live(conn, ~p"/topics")
+
+      assert index_live
+             |> element("a", "View As Tree")
+             |> has_element?()
     end
   end
 

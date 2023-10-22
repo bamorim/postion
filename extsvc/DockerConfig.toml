@@ -1,0 +1,11 @@
+[ballerina.observe]
+tracingEnabled=true
+tracingProvider="jaeger"
+
+[ballerinax.jaeger]
+agentHostname="tempo"
+agentPort=4317
+
+[ballerina.http.accessLogConfig]
+# Enable printing access logs on the Console. The default value is `false`.
+console = true

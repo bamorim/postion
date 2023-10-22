@@ -32,6 +32,7 @@ defmodule PostionWeb.ConnCase do
   end
 
   setup tags do
+    Hammox.stub(Postion.FeatureFlagsMock, :enabled?, fn _, _ -> false end)
     Postion.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

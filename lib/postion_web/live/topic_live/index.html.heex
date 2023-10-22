@@ -6,9 +6,15 @@
         <Heroicons.folder_plus class="w-5 h-5 text-gray-500" />New topic
       </.dropdown_menu_item>
 
-      <.dropdown_menu_item link_type="live_patch" to={~p"/topic_tree"} phx-click={JS.push_focus()}>
-        <Heroicons.magnifying_glass class="w-5 h-5 text-gray-500" />View As Tree
-      </.dropdown_menu_item>
+      <%= if @show_tree do %>
+        <.dropdown_menu_item
+          link_type="live_patch"
+          to={~p"/topic_tree"}
+          phx-click={JS.push_focus()}
+        >
+          <Heroicons.magnifying_glass class="w-5 h-5 text-gray-500" />View As Tree
+        </.dropdown_menu_item>
+      <% end %>
     </.dropdown>
   </:actions>
 </.header>

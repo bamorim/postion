@@ -22,6 +22,7 @@ defmodule Postion.Application do
       {Phoenix.PubSub, name: Postion.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: Postion.Finch},
+      Postion.FeatureFlags.Token,
       # Start a worker by calling: Postion.Worker.start_link(arg)
       # {Postion.Worker, arg},
       # Start to serve requests, typically the last entry
