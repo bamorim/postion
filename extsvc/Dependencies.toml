@@ -125,6 +125,9 @@ dependencies = [
 	{org = "ballerina", name = "log"},
 	{org = "ballerina", name = "time"}
 ]
+modules = [
+	{org = "ballerina", packageName = "jwt", moduleName = "jwt"}
+]
 
 [[package]]
 org = "ballerina"
@@ -308,6 +311,7 @@ version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "cloud"},
 	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "jwt"},
 	{org = "ballerinai", name = "observe"},
 	{org = "ballerinax", name = "jaeger"}
 ]

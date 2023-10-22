@@ -26,6 +26,15 @@ services:
     ports:
       - "4318:4318"
       - "4317:4317"
+  extsvc:
+    image: extsvc:latest
+    build: ./extsvc/target/docker
+    volumes:
+      - ./extsvc/jwt.crt:/home/ballerina/jwt.crt
+      - ./extsvc/jwt.key:/home/ballerina/jwt.key
+      - ./extsvc/ExampleConfig.toml:/home/ballerina/Config.toml
+    ports:
+      - "8080:8080"
 volumes:
   postgres_data: {}
   grafana_data: {}

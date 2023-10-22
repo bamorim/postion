@@ -1,3 +1,5 @@
 target
 generated
 Config.toml
+jwt.crt
+jwt.key
