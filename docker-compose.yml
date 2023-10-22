@@ -25,6 +25,7 @@ services:
       - ./docker/tempo/tempo.yaml:/etc/tempo.yaml
     ports:
       - "4318:4318"
+      - "4317:4317"
 volumes:
   postgres_data: {}
   grafana_data: {}
