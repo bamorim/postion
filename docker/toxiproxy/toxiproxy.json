@@ -1,0 +1,14 @@
+[
+  {
+    "name": "postgres",
+    "listen": "[::]:5432",
+    "upstream": "postgres:5432",
+    "enabled": true
+  },
+  {
+    "name": "extsvc",
+    "listen": "[::]:8080",
+    "upstream": "extsvc:8080",
+    "enabled": true
+  }
+]
