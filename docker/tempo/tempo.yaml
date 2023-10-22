@@ -1,0 +1,28 @@
+server:
+  http_listen_port: 3100
+
+distributor:
+  receivers:                         # the receiver protocols that Tempo will use, more on this below
+    jaeger:
+      protocols:
+        thrift_compact:
+        grpc:
+        thrift_binary:
+        thrift_http:
+    zipkin:
+    otlp:
+      protocols:
+        http:
+        grpc:
+    opencensus:
+
+storage:
+  trace:
+    backend: local                   # Use local backend for development
+    local:
+      path: /tmp/tempo               # Local directory to store the traces
+
+compactor:
+  compaction:
+    compaction_window: 1h            # blocks in this time window will be compacted together
+    max_compaction_objects: 1000000  # maximum size of compacted blocks
