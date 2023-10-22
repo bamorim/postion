@@ -9,10 +9,7 @@
   <:subtitle>
     Contributors:
     <%= for contributor <- @post.contributors do %>
-      <.live_component
-        id={contributor.user_id}
-        module={PostionWeb.UserBadgeComponent}
-      />
+      <.live_component id={contributor.user_id} module={PostionWeb.UserBadgeComponent} />
       <%= if contributor.author do %>
         (Author);
       <% else %>
