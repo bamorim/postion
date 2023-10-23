@@ -41,8 +41,11 @@ end
 defmodule UserSeed do
   def seed_users(size \\ 1000) do
     pw = Bcrypt.hash_pwd_salt("123412341234")
-    confirmed_at = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
-    inserted_at = DateTime.utc_now() |> DateTime.truncate(:second)
+
+    confirmed_at =
+      NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.add(-30, :day)
+
+    inserted_at = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.add(-30, :day)
 
     1..size
     |> Enum.map(fn _ ->
@@ -162,7 +165,8 @@ defmodule PostGenerator do
     generator =
       Enum.random([
         &Faker.Markdown.ordered_list/0,
-        &Faker.Markdown.unordered_list/0
+        &Faker.Markdown.unordered_list/0,
+        &Faker.Markdown.table/0
       ])
 
     generator.()
@@ -217,11 +221,16 @@ defmodule PostSeed do
       timeout: :infinity
     )
 
-    seed_contributors(inserted_at)
+    seed_contributors()
   end
 
-  defp seed_contributors(inserted_at) do
-    posts = where(Post, inserted_at: ^inserted_at)
+  defp seed_contributors do
+    posts =
+      from(p in Post,
+        as: :post,
+        where: not exists(from(c in Contributor, where: c.post_id == parent_as(:post).id))
+      )
+
     post_count = Repo.aggregate(posts, :count)
     # This is an estimation
     total = trunc(post_count * 3.5)
@@ -285,17 +294,26 @@ defmodule ProblemSeed do
   end
 
   defp insert_huge_topic(parent_id, size) do
-    topic = Repo.insert!(%Topic{name: "Huge Topic", parent_id: parent_id})
+    inserted_at = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.add(-30, :day)
+
+    topic =
+      Repo.insert!(%Topic{name: "Huge Topic", parent_id: parent_id, inserted_at: inserted_at})
 
     base =
-      from(gen in fragment("select generate_series(?::integer, ?::integer) as num", 1, ^size))
+      from(
+        gen in fragment(
+          "select generate_series(?::integer, ?::integer) as num, (now() - trunc(random()  * 10000) * '1 minute'::interval) as inserted_at",
+          1,
+          ^size
+        )
+      )
 
     query =
       select(base, [gen], %{
         title: fragment("CONCAT('Post ', ?::text)", gen.num),
         content: "Hello **world**",
-        inserted_at: type(^topic.inserted_at, :utc_datetime),
-        updated_at: type(^topic.inserted_at, :utc_datetime),
+        inserted_at: gen.inserted_at,
+        updated_at: gen.inserted_at,
         topic_id: type(^topic.id, :id)
       })
 

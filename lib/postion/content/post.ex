@@ -19,4 +19,33 @@ defmodule Postion.Content.Post do
     |> cast(attrs, [:title, :content, :topic_id])
     |> validate_required([:title, :content, :topic_id])
   end
+
+  def to_html(%__MODULE__{content: content}) do
+    MDEx.to_html(content,
+      extension: [autolink: true, strikethrough: true, table: true],
+      features: [sanitize: true]
+    )
+  end
+
+  def to_text(post, max_size \\ 50) do
+    post
+    |> to_html()
+    |> Floki.parse_fragment!()
+    |> Floki.text(sep: " ")
+    |> String.split(~r/\s+/)
+    |> Enum.reduce({"", true}, fn
+      _, {acc, false} ->
+        {acc, false}
+
+      word, {acc, _} ->
+        new = Enum.join([acc, word], " ")
+
+        if String.length(new) < max_size do
+          {new, true}
+        else
+          {"#{acc}...", false}
+        end
+    end)
+    |> elem(0)
+  end
 end

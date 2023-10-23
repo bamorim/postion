@@ -33,7 +33,9 @@
   </:actions>
 </.header>
 
-<.markdown input={@post.content} />
+<.prose>
+  <%= Phoenix.HTML.raw(@post_content) %>
+</.prose>
 
 <.back navigate={~p"/topics/#{@post.topic_id}"}>Back to topic</.back>
 

@@ -29,10 +29,8 @@ defmodule PostionWeb.TopicLive.Show do
   end
 
   @impl true
-  def handle_params(%{"id" => id}, _, socket) do
-    {:noreply,
-     socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))}
+  def handle_params(_, _, socket) do
+    {:noreply, assign(socket, :page_title, page_title(socket.assigns.live_action))}
   end
 
   defp page_title(:show), do: "Show Topic"
@@ -70,12 +68,19 @@ defmodule PostionWeb.TopicLive.Show do
 
     posts = Content.list_posts(topic_id: topic_id, limit: @per_page + 1, offset: offset)
     has_more = length(posts) > @per_page
-    posts = Enum.take(posts, @per_page)
+    posts = posts |> Enum.take(@per_page) |> Enum.map(&render_post/1)
     new_offset = offset + length(posts)
 
     socket
     |> assign(:posts_offset, new_offset)
     |> assign(:has_more_posts, has_more)
     |> stream(:posts, posts)
+  end
+
+  defp render_post(%Post{} = post) do
+    post
+    |> Map.take([:id, :title])
+    |> Map.put(:content, Post.to_text(post))
+    |> Map.put(:updated_at, Timex.format!(post.updated_at, "{relative}", :relative))
   end
 end

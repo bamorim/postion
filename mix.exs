@@ -40,7 +40,7 @@ defmodule Postion.MixProject do
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20.1"},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.30.0"},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
@@ -67,7 +67,8 @@ defmodule Postion.MixProject do
       {:knigge, "~> 1.4"},
       {:hammox, "~> 0.7", only: :test},
       {:req, "~> 0.3.0"},
-      {:opentelemetry_req, "~> 0.1.2"}
+      {:opentelemetry_req, "~> 0.1.2"},
+      {:timex, "~> 3.0"}
     ]
   end
 
