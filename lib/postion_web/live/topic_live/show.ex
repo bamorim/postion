@@ -7,18 +7,8 @@ defmodule PostionWeb.TopicLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    posts = Content.list_posts(topic_id: id, limit: 50)
-
-    {:ok,
-     socket
-     |> assign(:post_offset, length(posts))
-     |> stream(:child_topics, Content.list_topics(parent_id: id))
-     |> stream(:posts, posts)}
-  end
-
-  @impl true
-  def handle_params(%{"id" => id}, _, socket) do
     topic = Content.get_topic!(id)
+    child_topics = Content.list_topics(parent_id: id)
 
     parent_path =
       case topic.parent_id do
@@ -26,13 +16,23 @@ defmodule PostionWeb.TopicLive.Show do
         parent_id -> ~p"/topics/#{parent_id}"
       end
 
+    {:ok,
+     socket
+     |> assign(:topic, topic)
+     |> assign(:parent_path, parent_path)
+     |> assign(:child_topic, %Topic{})
+     |> assign(:post, %Post{})
+     |> stream(:child_topics, child_topics)
+     |> stream(:posts, [])
+     |> assign(:posts_offset, 0)
+     |> get_posts_paginated()}
+  end
+
+  @impl true
+  def handle_params(%{"id" => id}, _, socket) do
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:parent_path, parent_path)
-     |> assign(:topic, topic)
-     |> assign(:child_topic, %Topic{})
-     |> assign(:post, %Post{})}
+     |> assign(:page_title, page_title(socket.assigns.live_action))}
   end
 
   defp page_title(:show), do: "Show Topic"
@@ -58,5 +58,24 @@ defmodule PostionWeb.TopicLive.Show do
     {:ok, _} = Content.delete_topic(socket.assigns.topic)
 
     {:noreply, redirect(socket, to: socket.assigns.parent_path)}
+  end
+
+  def handle_event("load_more", _, socket) do
+    {:noreply, get_posts_paginated(socket)}
+  end
+
+  @per_page 50
+  defp get_posts_paginated(socket) do
+    %{topic: %{id: topic_id}, posts_offset: offset} = socket.assigns
+
+    posts = Content.list_posts(topic_id: topic_id, limit: @per_page + 1, offset: offset)
+    has_more = length(posts) > @per_page
+    posts = Enum.take(posts, @per_page)
+    new_offset = offset + length(posts)
+
+    socket
+    |> assign(:posts_offset, new_offset)
+    |> assign(:has_more_posts, has_more)
+    |> stream(:posts, posts)
   end
 end

@@ -60,9 +60,11 @@
     <:col :let={{_id, post}} label="Content"><%= post.content %></:col>
   </.table>
 
-  <div class="my-4 flex justify-center">
-    <.button label="Load more" variant="outline" phx-click={JS.push("load_more")} />
-  </div>
+  <%= if @has_more_posts do %>
+    <div class="my-4 flex justify-center">
+      <.button label="Load more" variant="outline" phx-click={JS.push("load_more")} />
+    </div>
+  <% end %>
 </section>
 
 <.back navigate={@parent_path}>Back to parent topic</.back>

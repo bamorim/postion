@@ -258,13 +258,13 @@ end
 
 defmodule ProblemSeed do
   # This seeds specific problems, like a topic with too many posts and a post with too many contributors.
-  def seed_problems do
+  def seed_problems(huge_topic_size \\ 500_000) do
     topic = Repo.insert!(%Topic{name: "99 Problems"})
     Repo.insert!(%Topic{name: "But a b ain't one", parent_id: topic.id})
 
     with_spinner(
       "Inserting huge topic",
-      fn -> {:ok, insert_huge_topic(topic.id)} end
+      fn -> {:ok, insert_huge_topic(topic.id, huge_topic_size)} end
     )
 
     with_spinner(
@@ -284,11 +284,11 @@ defmodule ProblemSeed do
     )
   end
 
-  defp insert_huge_topic(parent_id) do
+  defp insert_huge_topic(parent_id, size) do
     topic = Repo.insert!(%Topic{name: "Huge Topic", parent_id: parent_id})
 
     base =
-      from(gen in fragment("select generate_series(?::integer, ?::integer) as num", ^1, ^100_000))
+      from(gen in fragment("select generate_series(?::integer, ?::integer) as num", 1, ^size))
 
     query =
       select(base, [gen], %{
@@ -310,7 +310,7 @@ defmodule ProblemSeed do
 
     contributor_query =
       Post
-      |> where(inserted_at: ^topic.inserted_at)
+      |> where(topic_id: ^topic.id)
       |> select([p], %{post_id: p.id, author: true, user_id: ^user.id})
 
     Repo.transaction(
@@ -347,8 +347,16 @@ defmodule ProblemSeed do
   end
 end
 
-UserSeed.seed_users()
-TopicSeed.seed_topics()
+get_int = fn key, default ->
+  key |> System.get_env(to_string(default)) |> String.to_integer()
+end
+
+user_count = get_int.("USER_COUNT", 10)
+root_topics = get_int.("ROOT_TOPICS", 5)
+posts_in_huge_topic = get_int.("POSTS_IN_HUGE_TOPIC", 150)
+
+UserSeed.seed_users(user_count)
+TopicSeed.seed_topics(root_topics)
 PostSeed.seed_posts()
-ProblemSeed.seed_problems()
+ProblemSeed.seed_problems(posts_in_huge_topic)
 Owl.LiveScreen.await_render()
