@@ -13,12 +13,9 @@ defmodule PostionWeb.UserBadgeComponent do
   end
 
   @impl true
-  def update(%{id: id} = assigns, socket) do
+  def update(%{id: id}, socket) do
     user = Accounts.get_user!(id)
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(display_name: user.email)}
+    {:ok, assign(socket, display_name: user.email)}
   end
 end
