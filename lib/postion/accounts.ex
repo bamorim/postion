@@ -60,6 +60,23 @@ defmodule Postion.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  @doc """
+  Gets multiple users by their ids. Ids without existing users will just be ignored.
+
+  ## Examples
+
+      iex> get_users_by_id([1, 2])
+      [%User{id: 1}, %User{id: 2}]
+
+      iex> get_users_by_id([1, 2, 999999])
+      [%User{id: 1}, %User{id: 2}]
+  """
+  def get_users_by_id(ids) when is_list(ids) do
+    User
+    |> where([u], u.id in ^ids)
+    |> Repo.all()
+  end
+
   ## User registration
 
   @doc """

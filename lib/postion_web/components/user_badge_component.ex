@@ -13,9 +13,13 @@ defmodule PostionWeb.UserBadgeComponent do
   end
 
   @impl true
-  def update(%{id: id}, socket) do
-    user = Accounts.get_user!(id)
+  def update_many(assigns_sockets) do
+    ids = for {assigns, _sockets} <- assigns_sockets, do: assigns.id
 
-    {:ok, assign(socket, display_name: user.email)}
+    users = ids |> Accounts.get_users_by_id() |> Map.new(&{&1.id, &1})
+
+    for {assigns, socket} <- assigns_sockets do
+      assign(socket, display_name: users[assigns.id].email)
+    end
   end
 end
