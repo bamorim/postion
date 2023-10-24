@@ -68,7 +68,8 @@ defmodule Postion.MixProject do
       {:hammox, "~> 0.7", only: :test},
       {:req, "~> 0.3.0"},
       {:opentelemetry_req, "~> 0.1.2"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:nimble_csv, "~> 1.2.0"}
     ]
   end
 

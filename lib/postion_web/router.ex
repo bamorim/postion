@@ -81,6 +81,8 @@ defmodule PostionWeb.Router do
       live "/posts/:id", PostLive.Show, :show
       live "/posts/:id/show/edit", PostLive.Show, :edit
     end
+
+    get "/topics/:id/reports/word_count", TopicReportController, :word_count
   end
 
   scope "/", PostionWeb do

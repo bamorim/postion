@@ -48,4 +48,13 @@ defmodule Postion.Content.Post do
     end)
     |> elem(0)
   end
+
+  def words(%__MODULE__{content: content}) do
+    content
+    |> String.downcase()
+    |> String.replace("'", "")
+    |> String.replace(~r/[^[:alnum:]]/u, " ")
+    |> String.trim()
+    |> String.split(~r/\s+/)
+  end
 end

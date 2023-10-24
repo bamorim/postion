@@ -258,4 +258,21 @@ defmodule Postion.Content do
   def change_post(%Post{} = post, attrs \\ %{}) do
     Post.changeset(post, attrs)
   end
+
+  @doc """
+  Returns a word count report for a given topic
+  """
+  @spec word_count!(non_neg_integer()) :: [{String.t(), non_neg_integer()}]
+  def word_count!(topic_id) do
+    topic = get_topic!(topic_id)
+
+    Post
+    |> filter_post({:topic_id, topic.id})
+    |> Repo.all()
+    |> Enum.flat_map(&Post.words/1)
+    |> Enum.reduce(%{}, fn word, counts ->
+      Map.update(counts, word, 1, &(&1 + 1))
+    end)
+    |> Enum.sort_by(&elem(&1, 1), :desc)
+  end
 end
