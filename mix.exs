@@ -69,7 +69,9 @@ defmodule Postion.MixProject do
       {:req, "~> 0.3.0"},
       {:opentelemetry_req, "~> 0.1.2"},
       {:timex, "~> 3.0"},
-      {:nimble_csv, "~> 1.2.0"}
+      {:nimble_csv, "~> 1.2.0"},
+      {:benchee, "~> 1.0", only: :dev},
+      {:benchee_html, "~> 1.0", only: :dev}
     ]
   end
 
