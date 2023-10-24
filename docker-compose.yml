@@ -40,7 +40,21 @@ services:
       - "8474:8474"
       - "8080:8080"
       - "5432:5432"
+  prometheus:
+    image: prom/prometheus:v2.47.2
+    volumes:
+      - ./docker/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-remote-write-receiver"
+    ports:
+      - 9090:9090
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 volumes:
+  prometheus_data: {}
   postgres_data: {}
   grafana_data: {}
   tempo_data: {}
