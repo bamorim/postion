@@ -36,3 +36,7 @@ npm-debug.log
 /assets/node_modules/
 
 benchmarks/
+
+/*.trace
+/*.cgrind
+/*.analysis
