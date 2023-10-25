@@ -24,5 +24,18 @@ for {name, arg} <- [
       two_level: TopicGeneration.generate(10, 2),
       three_level: TopicGeneration.generate(10, 3)
     ] do
-  :fprof.apply(Postion.Content, :topic_tree, [arg], file: ~c"#{name}.trace")
+  :fprof.apply(Postion.Content, :topic_tree, [arg], file: ~c"profiling/#{name}.trace")
+
+  Task.async(fn ->
+    File.cwd!()
+    |> Path.join("vendor/erlgrind")
+    |> System.cmd(["profiling/#{name}.trace"])
+
+    File.cwd!()
+    |> Path.join("vendor/gprof2dot")
+    |> System.cmd(~w(-f callgrind -n 0.1 -o profiling/#{name}.dot profiling/#{name}.cgrind))
+
+    System.cmd("dot", ~w(-Tpng -o profiling/#{name}.png profiling/#{name}.dot))
+  end)
 end
+|> Task.await_many(:infinity)

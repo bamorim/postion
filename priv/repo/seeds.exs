@@ -358,7 +358,8 @@ defmodule ProblemSeed do
       |> Map.put(:title, "Too Many Contributors")
       |> Repo.insert!()
 
-    query = from(u in User, select: %{user_id: u.id, post_id: ^post.id, author: false}, limit: 1000)
+    query =
+      from(u in User, select: %{user_id: u.id, post_id: ^post.id, author: false}, limit: 1000)
 
     Repo.transaction(
       fn ->

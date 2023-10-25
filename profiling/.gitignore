@@ -1,0 +1,6 @@
+*.trace
+*.cgrind
+*.analysis
+*.png
+*.dot
+*.bggg
