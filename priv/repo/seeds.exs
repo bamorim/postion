@@ -42,22 +42,33 @@ defmodule UserSeed do
   def seed_users(size \\ 1000) do
     pw = Bcrypt.hash_pwd_salt("123412341234")
 
-    confirmed_at =
-      NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second) |> NaiveDateTime.add(-30, :day)
+    base =
+      from(
+        gen in fragment(
+          """
+          select generate_series(?::integer, ?::integer) as num,
+          (now() - ('30 days'::interval) - (trunc(random()  * 10000) * '1 hour'::interval)) as inserted_at
+          """,
+          1,
+          ^size
+        )
+      )
 
-    inserted_at = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.add(-30, :day)
+    query =
+      select(base, [gen], %{
+        email: fragment("CONCAT('user', ?::text, '@example.com')", gen.num),
+        hashed_password: ^pw,
+        confirmed_at: gen.inserted_at,
+        inserted_at: gen.inserted_at,
+        updated_at: gen.inserted_at
+      })
 
-    1..size
-    |> Enum.map(fn _ ->
-      %{
-        email: Faker.Internet.email(),
-        hashed_password: pw,
-        confirmed_at: confirmed_at,
-        inserted_at: inserted_at,
-        updated_at: inserted_at
-      }
-    end)
-    |> then(&Repo.insert_all(User, &1))
+    Repo.transaction(
+      fn ->
+        Repo.insert_all(User, query)
+      end,
+      timeout: :infinity
+    )
   end
 end
 
@@ -347,7 +358,7 @@ defmodule ProblemSeed do
       |> Map.put(:title, "Too Many Contributors")
       |> Repo.insert!()
 
-    query = select(User, [u], %{user_id: u.id, post_id: ^post.id, author: false})
+    query = from(u in User, select: %{user_id: u.id, post_id: ^post.id, author: false}, limit: 1000)
 
     Repo.transaction(
       fn ->

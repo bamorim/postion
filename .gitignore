@@ -40,3 +40,4 @@ benchmarks/
 /*.trace
 /*.cgrind
 /*.analysis
+*.bggg

@@ -5,7 +5,7 @@ config :postion, Postion.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "postion_dev",
+  database: System.get_env("DATABASE_NAME", "postion_dev"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
