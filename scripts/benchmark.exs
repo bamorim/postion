@@ -1,5 +1,25 @@
 alias Postion.Content.Topic
 
+defmodule TopicGeneration do
+  def generate(per_level, levels, parent_ids \\ [nil], result \\ [])
+
+  def generate(_per_level, 0, _parent_ids, topics), do: Enum.shuffle(topics)
+
+  def generate(per_level, levels, parent_ids, topics) do
+    new_topics =
+      Enum.flat_map(parent_ids, fn parent_id ->
+        Enum.map(1..per_level, fn _ ->
+          id = :erlang.unique_integer([:positive, :monotonic])
+          %Topic{id: id, name: "Topic #{id}", parent_id: parent_id}
+        end)
+      end)
+
+    topics = Enum.concat(topics, new_topics)
+    parent_ids = Enum.map(new_topics, & &1.id)
+    generate(per_level, levels - 1, parent_ids, topics)
+  end
+end
+
 defmodule TreeViewOld do
   def topic_tree(topics) do
     do_topic_tree(topics, nil, 1, 5)
@@ -27,26 +47,6 @@ defmodule TreeViewNew do
     topics_per_parent
     |> Map.get(parent_id, [])
     |> Map.new(&{&1.id, {&1.name, do_topic_tree(topics_per_parent, &1.id, level + 1, max_level)}})
-  end
-end
-
-defmodule TopicGeneration do
-  def generate(per_level, levels, parent_ids \\ [nil], result \\ [])
-
-  def generate(_per_level, 0, _parent_ids, topics), do: Enum.shuffle(topics)
-
-  def generate(per_level, levels, parent_ids, topics) do
-    new_topics =
-      Enum.flat_map(parent_ids, fn parent_id ->
-        Enum.map(1..per_level, fn _ ->
-          id = :erlang.unique_integer([:positive, :monotonic])
-          %Topic{id: id, name: "Topic #{id}", parent_id: parent_id}
-        end)
-      end)
-
-    topics = Enum.concat(topics, new_topics)
-    parent_ids = Enum.map(new_topics, & &1.id)
-    generate(per_level, levels - 1, parent_ids, topics)
   end
 end
 
