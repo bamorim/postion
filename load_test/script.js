@@ -31,12 +31,20 @@ function collectTopicIds(topic_ids, level) {
 let hugeTopicId, hugePostId, topicIds;
 let initialized = false;
 
-// Just to give 80% change to a random topic+post
-let randomActions = Array(8)
+const action = (name, percent) =>
+  Array(percent)
   .fill()
-  .map((_) => "RANDOM");
+  .map((_) => name)
 
-let actions = ["HUGE_TOPIC", "HUGE_POST", ...randomActions];
+let actions = [
+  ...action("HUGE_TOPIC", 10),
+  ...action("HUGE_POST", 10),
+  ...action("TREE_VIEW", 2),
+  ...action("RANDOM", 78)
+];
+
+// Special case to just open the root page
+if (__ENV.MODE == "NOTHING") { actions = ["NOTHING"] }
 
 // Entrypoints
 export default function () {
@@ -70,6 +78,9 @@ export default function () {
   } else {
     console.log("Initialized...");
     switch (randomItem(actions)) {
+      case "TREE_VIEW":
+        http.get(http.url`${baseUrl}/topic_tree`);
+        break;
       case "HUGE_TOPIC":
         console.log("Opening Huge Topic");
         http.get(http.url`${baseUrl}/topics/${hugeTopicId}`);
@@ -91,6 +102,9 @@ export default function () {
         } else {
           console.log("Topic Empty");
         }
+        break;
+      case "NOTHING":
+        break;
     }
   }
 }
