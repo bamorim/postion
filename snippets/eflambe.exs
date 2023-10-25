@@ -24,5 +24,6 @@ for {name, arg} <- [
       two_level: TopicGeneration.generate(10, 2),
       three_level: TopicGeneration.generate(10, 3)
     ] do
-  :eflambe.apply({Postion.Content, :topic_tree, [arg]}, open: :speedscope)
+  flamegraph = :eflambe.apply({Postion.Content, :topic_tree, [arg]}, return: :flamegraph)
+  File.write("profiling/#{name}.bggg", flamegraph)
 end
