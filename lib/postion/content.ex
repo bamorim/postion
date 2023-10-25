@@ -49,15 +49,17 @@ defmodule Postion.Content do
   """
   @spec topic_tree([%Topic{}]) :: topic_tree_result()
   def topic_tree(topics \\ list_topics()) do
-    do_topic_tree(topics, nil, 1, 5)
+    topics
+    |> Enum.group_by(& &1.parent_id)
+    |> do_topic_tree(nil, 1, 5)
   end
 
-  defp do_topic_tree(_all_topics, _parent_id, level, level), do: %{}
+  defp do_topic_tree(_topics_per_parent, _parent_id, level, level), do: %{}
 
-  defp do_topic_tree(all_topics, parent_id, level, max_level) do
-    all_topics
-    |> Enum.filter(&(&1.parent_id == parent_id))
-    |> Map.new(&{&1.id, {&1.name, do_topic_tree(all_topics, &1.id, level + 1, max_level)}})
+  defp do_topic_tree(topics_per_parent, parent_id, level, max_level) do
+    topics_per_parent
+    |> Map.get(parent_id, [])
+    |> Map.new(&{&1.id, {&1.name, do_topic_tree(topics_per_parent, &1.id, level + 1, max_level)}})
   end
 
   @doc """
