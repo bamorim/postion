@@ -204,9 +204,6 @@ defmodule PostGenerator do
   end
 end
 
-defmodule ContributorSeed do
-end
-
 defmodule PostSeed do
   def seed_posts do
     inserted_at = DateTime.utc_now() |> DateTime.truncate(:second)
